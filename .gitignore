@@ -208,6 +208,7 @@ venv_*/
 /tmp/
 .env
 /DIR_BASE_DEV/
+/dir_base_entorno_pruebas/
 
 # Ignorar directorio tmp en cualquier nivel del proyecto
 **/tmp/
