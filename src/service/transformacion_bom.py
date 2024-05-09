@@ -9,7 +9,7 @@ from openpyxl import load_workbook
 def transformacion_bom(file_path):
     # Extraer el nombre del archivo sin la ruta y sin la extensión
     base_name = os.path.basename(file_path)
-    nombre_modelo = base_name.split('_')[1].split('.')[0]
+    nombre_modelo = base_name.split('_')[-1].split('.xlsx')[0]
     nombre_componente = base_name.split('_')[0]
 
     # Cargar el archivo Excel
@@ -26,7 +26,8 @@ def transformacion_bom(file_path):
         'Ctd.componente (UMB)': 1,
         'Nivel': 0,
         'Ruta (predecesor)': 0,
-        'Entrada en tabla': 0
+        'Entrada en tabla': 0,
+        'Modelo': nombre_modelo
     }
 
     # Crear la columna 'Modelo'
