@@ -207,6 +207,7 @@ venv_*/
 /data/
 /tmp/
 .env
+.xlsx
 /DIR_BASE_DEV/
 /dir_base_entorno_pruebas/
 
