@@ -19,7 +19,7 @@ def preparar_datos_coois(coois):
 
 
 def generar_crosstab_modelo_materiales(bom, coois, modelo):
-    print(f"Procesando modelo: {modelo}")
+    # print(f"Procesando modelo: {modelo}")
     bom_filtrado = bom[bom['Modelo'] == modelo]
     coois_filtrado = coois[coois['Model (Effectivity)'] == modelo]
 
@@ -30,11 +30,13 @@ def generar_crosstab_modelo_materiales(bom, coois, modelo):
     # Verificar coincidencia
     coois_filtrado = coois_filtrado[coois_filtrado['Material'].isin(bom_filtrado['Nº componentes'])]
 
-    if coois_filtrado.empty:
-        print("No hay coincidencias entre COOIS 'Material' y BOM 'Nº componentes'.")
-    else:
-        print(f"Coincidencias encontradas: {len(coois_filtrado)} registros")
+    # if coois_filtrado.empty (debug):
+    #     print("No hay coincidencias entre COOIS 'Material' y BOM 'Nº componentes'.")
+    # # else:
+    # #     print(f"Coincidencias encontradas: {len(coois_filtrado)} registros")
 
     crosstab = pd.crosstab(coois_filtrado['mod_ud'], coois_filtrado['Material'],
                            values=coois_filtrado['Order quantity (GMEIN)'], aggfunc='sum').fillna(0)
+    
+
     return crosstab
