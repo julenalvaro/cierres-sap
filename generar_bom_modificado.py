@@ -1,4 +1,4 @@
-# PATH: app.py
+# PATH: generar_bom_modificado.py
 
 from src.app.generar_bom_modificado import generar_bom_modificado
 
