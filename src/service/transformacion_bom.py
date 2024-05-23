@@ -2,9 +2,7 @@
 
 import pandas as pd
 import numpy as np
-from datetime import datetime
 import os
-from openpyxl import load_workbook
 
 def transformacion_bom(file_path):
     # Extraer el nombre del archivo sin la ruta y sin la extensión

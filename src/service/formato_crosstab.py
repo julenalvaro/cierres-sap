@@ -1,6 +1,7 @@
 # PATH: src/service/formato_crosstab.py
 
-from openpyxl.styles import PatternFill, Font
+from openpyxl.worksheet.hyperlink import Hyperlink
+from openpyxl.styles import Font, Alignment, PatternFill
 from openpyxl.utils import get_column_letter
 
 def cargar_umb(bom, modelo):
@@ -59,3 +60,25 @@ def format_crosstabs(ws, bom, modelo):
                 pass
         adjusted_width = (max_length + 2)
         ws.column_dimensions[column].width = adjusted_width
+
+def agregar_enlace_indice(index_sheet, modelo, row):
+    """Agrega un enlace al índice y aplica el formato."""
+    cell = index_sheet.cell(row=row, column=1, value=modelo)
+    link = f"#'{modelo}'!A1"
+    cell.hyperlink = Hyperlink(ref="", location=link, display=modelo)
+    cell.font = Font(color="0000FF", underline="single")
+
+def formato_indice(index_sheet):
+    """Aplica formato al índice."""
+    header = index_sheet.cell(row=1, column=1, value="Modelo")
+    header.font = Font(bold=True, size=14)
+    header.alignment = Alignment(horizontal="center")
+    header.fill = PatternFill(start_color="4F81BD", end_color="4F81BD", fill_type="solid")
+    
+    # Ajusta el ancho de la columna
+    index_sheet.column_dimensions['A'].width = 30
+
+    # Centrar el contenido del resto de la columna
+    for row in index_sheet.iter_rows(min_row=2, max_row=index_sheet.max_row, min_col=1, max_col=1):
+        for cell in row:
+            cell.alignment = Alignment(horizontal="center")
