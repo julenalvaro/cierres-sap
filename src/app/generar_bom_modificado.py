@@ -1,3 +1,5 @@
+# PATH: src/app/generar_bom_modificado.py
+
 import os
 import pandas as pd
 from datetime import datetime
@@ -47,18 +49,18 @@ def generar_bom_modificado():
             # Crear un objeto ExcelWriter con la ruta de salida
             with pd.ExcelWriter(output_path, engine='openpyxl') as writer:
                 # Guardar el df completo en la primera pestaña
-                df_concat.to_excel(writer, index=False, sheet_name='con_caldereria')
+                df_concat.to_excel(writer, index=False, sheet_name='todo')
 
-                # Filtrar y guardar en la segunda pestaña
-                filtro1 = ~df_concat['Grupo de artículos'].astype(str).str.contains('Z00170000|Z00440000', na=False) & \
-                          ~df_concat['Grupo de artículos'].astype(str).str.startswith('31')
-                df_sin_caldereria = df_concat[filtro1]
-                df_sin_caldereria.to_excel(writer, index=False, sheet_name='sin_caldereria')
+                # # Filtrar y guardar en la segunda pestaña
+                # filtro1 = ~df_concat['Grupo de artículos'].astype(str).str.contains('Z00170000|Z00440000', na=False) & \
+                #           ~df_concat['Grupo de artículos'].astype(str).str.startswith('31')
+                # df_sin_caldereria = df_concat[filtro1]
+                # df_sin_caldereria.to_excel(writer, index=False, sheet_name='sin_caldereria')
 
-                # Filtrar y guardar en la tercera pestaña
-                filtro2 = ~df_concat['Grupo de artículos'].astype(str).str.contains('Z00450000|Z00180000|Z00590000', na=False)
-                df_sin_cald_sin_sub = df_concat[filtro1 & filtro2]
-                df_sin_cald_sin_sub.to_excel(writer, index=False, sheet_name='sin_cald_sin_sub')
+                # # Filtrar y guardar en la tercera pestaña
+                # filtro2 = ~df_concat['Grupo de artículos'].astype(str).str.contains('Z00450000|Z00180000|Z00590000', na=False)
+                # df_sin_cald_sin_sub = df_concat[filtro1 & filtro2]
+                # df_sin_cald_sin_sub.to_excel(writer, index=False, sheet_name='sin_cald_sin_sub')
 
             # Verificar que el archivo se ha creado correctamente
             if os.path.exists(output_path):
