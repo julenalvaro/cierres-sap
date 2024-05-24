@@ -2,20 +2,25 @@
 
 import pandas as pd
 
-def cargar_datos(archivo, sheet_bom, sheet_coois):
-    """
-    Carga los datos desde las pestañas especificadas del archivo Excel.
-    """
-    bom = pd.read_excel(archivo, sheet_name=sheet_bom)
+def cargar_datos(archivo, sheet_bom_ea, sheet_bom_eb, sheet_coois):
+    bom_ea = pd.read_excel(archivo, sheet_name=sheet_bom_ea)
+    bom_eb = pd.read_excel(archivo, sheet_name=sheet_bom_eb)
     coois = pd.read_excel(archivo, sheet_name=sheet_coois)
-    return bom, coois
+    return bom_ea, bom_eb, coois
 
 def preparar_datos_coois(coois):
-    """
-    Añade una nueva columna 'mod_ud' que combina 'Model (Effectivity)' con 'Z Unit' formateado.
-    """
-    coois['mod_ud'] = coois['Model (Effectivity)'].astype(str) + coois['Z Unit'].apply(lambda x: f"{x:03d}")
-    return coois
+    # Asegura que la columna 'Model (Effectivity)' se maneje como string
+    coois['Model (Effectivity)'] = coois['Model (Effectivity)'].astype(str)
+    
+    # Agrega la columna 'mod_ud' combinando 'Model (Effectivity)' y 'Z Unit'
+    coois['mod_ud'] = coois['Model (Effectivity)'] + coois['Z Unit'].apply(lambda x: f"{x:03d}")
+    
+    # Filtra los subconjuntos EA y EB, manejando valores NA correctamente
+    coois_ea = coois[coois['Model (Effectivity)'].str.contains('EA', na=False)]
+    coois_eb = coois[coois['Model (Effectivity)'].str.contains('EB', na=False)]
+    
+    return coois_ea, coois_eb
+
 
 
 def generar_crosstab_modelo_materiales(bom, coois, modelo):
