@@ -44,6 +44,6 @@ def generar_excel_crosstabs_acabados(archivo, sheet_bom, sheet_coois):
     formato_indice(index_sheet)
 
     timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-    filename = f'crosstabs_materiales_acabados_{timestamp}.xlsx'
+    filename = f'./results/crosstabs_acabados/crosstabs_materiales_acabados_{timestamp}.xlsx'
     wb.save(filename)
     return filename

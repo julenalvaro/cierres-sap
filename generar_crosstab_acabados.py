@@ -3,8 +3,13 @@
 from src.app.generar_excel_crosstabs_acabados import generar_excel_crosstabs_acabados
 
 if __name__ == "__main__":
-    # Configuración de los parámetros del archivo
-    archivo_excel = r"C:\Users\18287\OneDrive - Construcciones y Auxiliar deFerrocarriles SA (CAF)\projects\25-mudanza-ordenes-baan\archivos\descargas\subset\datos descargados - 22_05_2024 - subset.xlsx"
+    # Configuración de los parámetros del archivo para test
+    # archivo_excel = r"C:\Users\18287\OneDrive - Construcciones y Auxiliar deFerrocarriles SA (CAF)\projects\25-mudanza-ordenes-baan\archivos\descargas\subset\datos descargados - 22_05_2024 - subset.xlsx"
+    # sheet_bom = 'todo'
+    # sheet_coois = 'descarga_coois'
+
+    # Configuración de los parámetros del archivo para prod
+    archivo_excel = r"C:\Users\18287\OneDrive - Construcciones y Auxiliar deFerrocarriles SA (CAF)\projects\25-mudanza-ordenes-baan\archivos\descargas\descarga_producción\datos descargados - 23_05_2024.xlsx"
     sheet_bom = 'todo'
     sheet_coois = 'descarga_coois'
 
