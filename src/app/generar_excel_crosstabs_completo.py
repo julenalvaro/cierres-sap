@@ -5,7 +5,7 @@ from openpyxl.utils.dataframe import dataframe_to_rows
 import datetime
 
 from src.service.generar_crosstab_modelo_materiales import cargar_datos, preparar_datos_coois, generar_crosstab_modelo_materiales
-from src.service.formato_crosstab import format_crosstabs, agregar_cantidad_bom_header, formato_indice
+from src.service.formato_crosstab import format_crosstabs, agregar_cantidad_bom_header, formato_indice, agregar_enlace_indice, agregar_enlace_indice_hoja
 
 def generar_excel_crosstabs_completo(archivo, sheet_bom_ea, sheet_bom_eb, sheet_coois):
     print('Cargando datos...')
@@ -22,13 +22,17 @@ def generar_excel_crosstabs_completo(archivo, sheet_bom_ea, sheet_bom_eb, sheet_
         index_sheet.append(["Modelo"])
         unique_modelos = sorted(bom['Modelo'].unique())
 
-        for modelo in unique_modelos:
+        for i, modelo in enumerate(unique_modelos, start=2):
             ws = wb.create_sheet(title=modelo)
             crosstab = generar_crosstab_modelo_materiales(bom, coois, modelo)
             for row in dataframe_to_rows(crosstab, index=True, header=True):
                 ws.append(row)
             agregar_cantidad_bom_header(ws, bom, modelo)
             format_crosstabs(ws, bom, modelo)
+
+            # Agregar enlace al índice y darle formato
+            agregar_enlace_indice(index_sheet, modelo, i)
+            agregar_enlace_indice_hoja(ws)
 
         formato_indice(index_sheet)
         timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
