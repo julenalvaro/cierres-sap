@@ -1,5 +1,3 @@
-# PATH: src/app/generar_excel_crosstabs_completo.py
-
 from openpyxl import Workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
 import datetime
