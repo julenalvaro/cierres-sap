@@ -208,6 +208,7 @@ venv_*/
 /tmp/
 .env
 *.xlsx
+*.csv
 /DIR_BASE_DEV/
 /dir_base_entorno_pruebas/
 

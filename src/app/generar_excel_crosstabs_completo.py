@@ -5,7 +5,7 @@ from openpyxl import Workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
 import datetime
 
-from src.service.generar_crosstab_modelo_materiales import cargar_datos, preparar_datos_coois, preparar_datos_stocks, generar_crosstab_modelo_materiales
+from src.service.generar_crosstab_modelo_materiales import cargar_datos, transformar_coois, transformar_stocks, transformar_fabricacion_real, generar_crosstab_modelo_materiales
 from src.service.formato_crosstab import format_crosstabs, agregar_cantidad_bom_header, formato_indice, agregar_enlace_indice, agregar_enlace_indice_hoja
 from src.service.transformar_bom_a_arbol_correcciones import transformar_bom_a_arbol_correcciones
 
@@ -24,10 +24,15 @@ def generar_excel_crosstabs_completo(archivo, sheet_bom_ea, sheet_bom_eb, sheet_
 
         print('Preparando datos...')
 
-        coois_ea, coois_eb = preparar_datos_coois(coois)
-        stocks = preparar_datos_stocks(stocks)
+        # transformaciones primarias tablas, traducidas del código M 
+        
+        coois_ea, coois_eb = transformar_coois(coois)
+        stocks = transformar_stocks(stocks)
+        fabricacion_real_eb = transformar_fabricacion_real(fabricacion_real_eb)
+        fabricacion_real_ea = transformar_fabricacion_real(fabricacion_real_ea)
 
         results = []
+
         for bom, coois, fabricacion_real, subset_name in [(bom_ea, coois_ea, fabricacion_real_ea, 'EA'), (bom_eb, coois_eb, fabricacion_real_eb, 'EB')]:
             try:
                 print(f'Generando archivo Excel para {subset_name}...')
