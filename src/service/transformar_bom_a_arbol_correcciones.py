@@ -44,7 +44,7 @@ def transformar_bom_a_arbol_correcciones(bom, coois, fabr_real, stocks):
         (~bom["Grupo de artículos"].isin([
             "Z00360000", "Z00380000", "Z00440000", "Z00460000", "Z00500000", "Z00550000", "Z00570000", "Z00590000", "Z00600000"
         ]))
-    ]
+    ].copy() # asegurar que estamos trabajando con un DataFrame independiente
 
     # Añadir columna "fase"
     bom.loc[:, "fase"] = bom.apply(

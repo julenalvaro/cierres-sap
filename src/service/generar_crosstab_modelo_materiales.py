@@ -35,6 +35,9 @@ def transformar_coois(coois):
 
     # Añadir una columna personalizada en coois
     coois['mod-mat'] = coois['Model (Effectivity)'] + '-' + coois['Material']
+    
+    # Agrega la columna 'mod_ud' combinando 'Model (Effectivity)' y 'Z Unit'
+    coois['mod_ud'] = coois['Model (Effectivity)'] + coois['Z Unit'].apply(lambda x: f"{x:03d}")
 
     # Filtra los subconjuntos EA y EB, manejando valores NA correctamente
     coois_ea = coois[coois['Model (Effectivity)'].str.contains('EA', na=False)]

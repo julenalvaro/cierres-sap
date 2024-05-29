@@ -1,6 +1,7 @@
 # PATH: src/app/generar_excel_crosstabs_completo.py
 
 import traceback
+import numpy as np
 from openpyxl import Workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
 import datetime
@@ -58,6 +59,11 @@ def generar_excel_crosstabs_completo(archivo, sheet_bom_ea, sheet_bom_eb, sheet_
                 print('Transformando árbol...')
 
                 arbol_correcciones = transformar_bom_a_arbol_correcciones(bom, coois, fabricacion_real, stocks)
+
+                # Reemplazar NA con un placeholder antes de escribir en Excel
+                arbol_correcciones = arbol_correcciones.astype('object')  # Convertir todas las columnas a tipo object
+                arbol_correcciones.fillna('', inplace=True)
+
             
                 # Aquí debes considerar cómo y dónde deseas guardar el DataFrame `arbol_correcciones`
                 arbol_ws = wb.create_sheet(title=f'arbol_correcciones_{subset_name}')
