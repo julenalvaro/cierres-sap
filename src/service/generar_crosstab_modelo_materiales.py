@@ -101,7 +101,7 @@ def generar_crosstab_modelo_materiales(bom, coois, modelo):
     # #     print(f"Coincidencias encontradas: {len(coois_filtrado)} registros")
 
     crosstab = pd.crosstab(coois_filtrado['mod_ud'], coois_filtrado['Material'],
-                           values=coois_filtrado['Order quantity (GMEIN)'], aggfunc='sum').fillna(0)
+                            values=coois_filtrado['Order quantity (GMEIN)'], aggfunc='sum').fillna(0)
     
 
     return crosstab
