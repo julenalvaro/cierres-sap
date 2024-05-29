@@ -57,9 +57,8 @@ def generar_excel_crosstabs_completo(archivo, sheet_bom_ea, sheet_bom_eb, sheet_
 
                 print('Transformando árbol...')
 
-                arbol_correcciones = transformar_bom_a_arbol_correcciones(bom, coois, stocks, fabricacion_real, subset_name)
+                arbol_correcciones = transformar_bom_a_arbol_correcciones(bom, coois, fabricacion_real, stocks)
             
-
                 # Aquí debes considerar cómo y dónde deseas guardar el DataFrame `arbol_correcciones`
                 arbol_ws = wb.create_sheet(title=f'arbol_correcciones_{subset_name}')
                 for row in dataframe_to_rows(arbol_correcciones, index=False, header=True):

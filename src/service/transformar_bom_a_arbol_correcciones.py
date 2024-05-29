@@ -4,75 +4,89 @@ import pandas as pd
 import numpy as np
 import traceback
 
-def transformar_bom_a_arbol_correcciones(bom, coois, stocks, fabricacion_real, subset_name):
-    try:
-        # Renombrar columnas y cambiar tipos de datos
+def transformar_bom_a_arbol_correcciones(bom, coois, fabr_real, stocks):
+    # Verificar y renombrar columnas
+    if "Texto breve-objeto" in bom.columns:
         bom.rename(columns={"Texto breve-objeto": "Texto breve"}, inplace=True)
-        bom = bom.astype({"index": int, "Versión fabricación": int, "Nivel explosión": str, 
-                          "Nº componentes": str, "Texto breve": str, "Grupo de artículos": str, 
-                          "Almacén producción": str, "Ctd.componente (UMB)": int, 
-                          "Nivel": int, "Ruta (predecesor)": int, "Entrada en tabla": int, 
-                          "Modelo": str, "pos_estructura": str})
 
-        # Crear la columna "mod-mat"
-        bom['mod-mat'] = bom['Modelo'] + '-' + bom['Nº componentes']
+    # Cambiar tipos de datos si las columnas existen
+    cols_to_convert = {
+        "index": "int64",
+        "Versión fabricación": "int64",
+        "Nivel explosión": "str",
+        "Nº componentes": "str",
+        "Texto breve": "str",
+        "Grupo de artículos": "str",
+        "Almacén producción": "str",
+        "Ctd.componente (UMB)": "int64",
+        "Nivel": "int64",
+        "Ruta (predecesor)": "int64",
+        "Entrada en tabla": "int64",
+        "Modelo": "str",
+        "pos_estructura": "str"
+    }
 
-        # Lista de valores a excluir
-        valores_a_excluir = {"25172023", "25173928", "25173930", "31122300", "31231500", 
-                              "31341100", "31341800", "31400000", "39121407", "39121600", 
-                              "39121721", "Z00350000", "Z00170000"}
+    for col, dtype in cols_to_convert.items():
+        if col in bom.columns:
+            bom[col] = bom[col].astype(dtype)
 
-        # Filtrar la tabla excluyendo los valores de la lista
-        bom = bom[~bom['Grupo de artículos'].isin(valores_a_excluir)]
-        bom = bom[(bom['Versión fabricación'] != 0) &
-                  (~bom['Grupo de artículos'].isin({"Z00360000", "Z00380000", "Z00440000", 
-                                                      "Z00460000", "Z00500000", "Z00550000", 
-                                                      "Z00570000", "Z00590000", "Z00600000"}))]
+    # Añadir columna personalizada
+    bom["mod-mat"] = bom["Modelo"] + "-" + bom["Nº componentes"]
 
-        # Añadir columna "fase"
-        conditions = [
-            (bom['Nº componentes'].str.contains("Z1")),
-            (bom['Nº componentes'].str.contains("Z2")),
-            (bom['Texto breve'].notna() & bom['Texto breve'].str.lower().str.contains("chorr")),
-            (bom['Grupo de artículos'] == "Z00210000")
-        ]
-        choices = ["Z1", "Z2", "PINTURA", "SUBCONJUNTOS"]
-        bom['fase'] = np.select(conditions, choices, default=None)
+    # Filtrar valores excluidos
+    valores_a_excluir = [
+        "25172023", "25173928", "25173930", "31122300", "31231500", "31341100", "31341800", "31400000",
+        "39121407", "39121600", "39121721", "Z00350000", "Z00170000"
+    ]
+    bom = bom[
+        ~bom["Grupo de artículos"].isin(valores_a_excluir) &
+        (bom["Versión fabricación"] != 0) &
+        (~bom["Grupo de artículos"].isin([
+            "Z00360000", "Z00380000", "Z00440000", "Z00460000", "Z00500000", "Z00550000", "Z00570000", "Z00590000", "Z00600000"
+        ]))
+    ]
 
-        # Merge con descarga_coois
-        bom = pd.merge(bom, coois, on="mod-mat", how="inner")
-        bom['ordenes_GMEIN_disp'] = bom.groupby('mod-mat')['Order quantity (GMEIN)'].transform('sum')
+    # Añadir columna "fase"
+    bom.loc[:, "fase"] = bom.apply(
+    lambda row: "Z1" if "Z1" in row["Nº componentes"] else
+                "Z2" if "Z2" in row["Nº componentes"] else
+                "PINTURA" if pd.notnull(row["Texto breve"]) and "chorr" in row["Texto breve"].lower() else
+                "SUBCONJUNTOS" if row["Grupo de artículos"] == "Z00210000" else
+                None, axis=1)
 
-        # Merge con fabricacion_real
-        bom['mod-fase'] = bom['Modelo'] + '-' + bom['fase']
-        bom = pd.merge(bom, fabricacion_real, left_on="mod-fase", right_on="Mod-Fas", how="left")
-        bom.rename(columns={"cant_no_fab": "ordenes_necesarias"}, inplace=True)
+    # Sumarizar coois antes del merge
+    coois_aggregated = coois.groupby('mod-mat').agg({'Order quantity (GMEIN)': 'sum'}).reset_index()
+    coois_aggregated.rename(columns={'Order quantity (GMEIN)': 'ordenes_GMEIN_disp'}, inplace=True)
 
-        # Reordenar y limpiar las columnas para el resultado final
-        bom['unidades_necesarias'] = bom['ordenes_necesarias']
-        bom['ordenes_necesarias'] = bom['unidades_necesarias'] * bom['Ctd.componente (UMB)']
-        bom['margen_ordenes'] = bom['ordenes_GMEIN_disp'] - bom['ordenes_necesarias']
-        bom['proj-mat'] = bom['Modelo'].str.slice(2, 6) + '-' + bom['Nº componentes']
+    # Unir con coois sumarizado
+    bom = bom.merge(coois_aggregated, on="mod-mat", how="inner")
 
-        # Merge con stocks
-        bom = pd.merge(bom, stocks, on="proj-mat", how="left")
-        bom['stock'] = bom.groupby('proj-mat')['Unrestricted Stock'].transform('count')
+    # Añadir columna personalizada "mod-fase"
+    bom["mod-fase"] = bom["Modelo"] + "-" + bom["fase"]
 
-        # Reordenar y limpiar las columnas para el resultado final
-        column_order = ["index", "Versión fabricación", "Nivel explosión", "Nº componentes", 
-                        "Texto breve", "Grupo de artículos", "Almacén producción", "Nivel", 
-                        "Ruta (predecesor)", "Entrada en tabla", "Modelo", "pos_estructura", 
-                        "mod-mat", "fase", "mod-fase", "proj-mat", "Ctd.componente (UMB)", 
-                        "unidades_necesarias", "ordenes_necesarias", "ordenes_GMEIN_disp", 
-                        "margen_ordenes", "stock"]
+    # Unir con fabricacion_real_acabados
+    bom = bom.merge(fabr_real, left_on="mod-fase", right_on="Mod-Fas", how="left")
+    bom.rename(columns={"cant_no_fab": "ordenes_necesarias"}, inplace=True)
 
-        # Verificar si todas las columnas están presentes antes de reordenar
-        missing_columns = [col for col in column_order if col not in bom.columns]
-        if missing_columns:
-            raise KeyError(f"Faltan las siguientes columnas: {missing_columns}")
+    # Ordenar y calcular columnas adicionales
+    bom.sort_values(by=["index"], inplace=True)
+    bom["unidades_necesarias"] = bom["ordenes_necesarias"] * bom["Ctd.componente (UMB)"]
+    bom["margen_ordenes"] = bom["ordenes_GMEIN_disp"] - bom["unidades_necesarias"]
+    bom["proj-mat"] = bom["Modelo"].str[2:6] + "-" + bom["Nº componentes"]
 
-        return bom[column_order]
-    except Exception as e:
-        print(f"Error en transformar_bom_a_arbol_correcciones: {e}")
-        traceback.print_exc()
-        return pd.DataFrame()
+    # Sumarizar stocks antes del merge
+    stocks_aggregated = stocks.groupby('proj-mat').agg({'Unrestricted Stock': 'sum'}).reset_index()
+    stocks_aggregated.rename(columns={'Unrestricted Stock': 'stock'}, inplace=True)
+
+    # Unir con stocks sumarizado
+    bom = bom.merge(stocks_aggregated, on="proj-mat", how="left")
+
+    # Reordenar columnas
+    bom = bom[[
+        "index", "Versión fabricación", "Nivel explosión", "Nº componentes", "Texto breve", "Grupo de artículos",
+        "Almacén producción", "Nivel", "Ruta (predecesor)", "Entrada en tabla", "Modelo", "pos_estructura", "mod-mat",
+        "fase", "mod-fase", "proj-mat", "Ctd.componente (UMB)", "unidades_necesarias", "ordenes_necesarias",
+        "ordenes_GMEIN_disp", "margen_ordenes", "stock"
+    ]]
+
+    return bom
