@@ -1,3 +1,5 @@
+# PATH: src/app/generar_excel_crosstabs_completo.py
+
 import traceback
 from openpyxl import Workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
@@ -36,8 +38,6 @@ def generar_excel_crosstabs_completo(archivo, sheet_bom_ea, sheet_bom_eb, sheet_
                 index_sheet.append(["Modelo"])
                 unique_modelos = sorted(bom['Modelo'].unique())
 
-                arbol_correcciones = transformar_bom_a_arbol_correcciones(bom, coois, stocks, fabricacion_real, subset_name)
-
                 for i, modelo in enumerate(unique_modelos, start=2):
                     ws = wb.create_sheet(title=modelo)
                     crosstab = generar_crosstab_modelo_materiales(bom, coois, modelo)
@@ -49,6 +49,11 @@ def generar_excel_crosstabs_completo(archivo, sheet_bom_ea, sheet_bom_eb, sheet_
                     # Agregar enlace al índice y darle formato
                     agregar_enlace_indice(index_sheet, modelo, i)
                     agregar_enlace_indice_hoja(ws)
+
+                print('Transformando árbol...')
+
+                arbol_correcciones = transformar_bom_a_arbol_correcciones(bom, coois, stocks, fabricacion_real, subset_name)
+            
 
                 # Aquí debes considerar cómo y dónde deseas guardar el DataFrame `arbol_correcciones`
                 arbol_ws = wb.create_sheet(title=f'arbol_correcciones_{subset_name}')
