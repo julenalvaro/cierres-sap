@@ -3,7 +3,7 @@
 from src.app.generar_excel_crosstabs_completo import generar_excel_crosstabs_completo
 
 if __name__ == "__main__":
-    archivo_excel = r"C:\Users\18287\OneDrive - Construcciones y Auxiliar deFerrocarriles SA (CAF)\projects\25-mudanza-ordenes-baan\archivos\descargas\subset\datos descargados - 24_05_2024 - complet.xlsx"
+    archivo_excel = r"C:\Users\18287\OneDrive - Construcciones y Auxiliar deFerrocarriles SA (CAF)\projects\25-mudanza-ordenes-baan\archivos\descargas\subset\datos descargados - 24_05_2024 - complet - subset.xlsx"
     args = {
         "archivo": archivo_excel,
         "sheet_bom_ea": 'bom-ea',
