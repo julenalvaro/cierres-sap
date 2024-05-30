@@ -2,11 +2,10 @@ import os
 import traceback
 from openpyxl import Workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
-import datetime
 
 from src.config.config import obtener_configuracion
 from src.service.generar_crosstab_modelo_materiales import cargar_datos, transformar_coois, transformar_stocks, transformar_fabricacion_real, generar_crosstab_modelo_materiales
-from src.service.formato_crosstab import format_crosstabs, agregar_cantidad_bom_header, formato_indice, agregar_enlace_indice, agregar_enlace_indice_hoja
+from src.service.formato_crosstab import format_crosstabs, agregar_cantidad_bom_header, formato_indice, agregar_enlace_indice, agregar_enlace_indice_hoja, guardar_excel
 from src.service.transformar_bom_a_arbol_correcciones import transformar_bom_a_arbol_correcciones
 
 def generar_excel_crosstabs_completo(archivo, sheet_bom_ea, sheet_bom_eb, sheet_coois, sheet_stocks, sheet_fabricacion_real_ea, sheet_fabricacion_real_eb):
@@ -67,18 +66,14 @@ def generar_excel_crosstabs_completo(archivo, sheet_bom_ea, sheet_bom_eb, sheet_
                 arbol_correcciones = arbol_correcciones.astype('object')  # Convertir todas las columnas a tipo object
                 arbol_correcciones.fillna('', inplace=True)
 
-            
                 # Aquí debes considerar cómo y dónde deseas guardar el DataFrame `arbol_correcciones`
                 arbol_ws = wb.create_sheet(title=f'arbol_correcciones_{subset_name}')
                 for row in dataframe_to_rows(arbol_correcciones, index=False, header=True):
                     arbol_ws.append(row)
 
                 formato_indice(index_sheet)
-                timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-                dir_subset = os.path.join(dir_crosstabs, f'results_{subset_name}')
-                os.makedirs(dir_subset, exist_ok=True)  # Crear el directorio si no existe
-                filename = os.path.join(dir_subset, f'crosstabs_materiales_{subset_name}_{timestamp}.xlsx')
-                wb.save(filename)
+
+                filename = guardar_excel(wb, dir_crosstabs, subset_name)
                 results.append(filename)
                 print(f'Archivo generado para {subset_name}: {filename}')
             except Exception as e:

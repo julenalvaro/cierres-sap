@@ -1,8 +1,18 @@
 # PATH: src/service/formato_crosstab.py
 
+import datetime, os
 from openpyxl.worksheet.hyperlink import Hyperlink
 from openpyxl.styles import Font, Alignment, PatternFill
 from openpyxl.utils import get_column_letter
+
+def guardar_excel(wb, dir_crosstabs, subset_name):
+    """Guardar el archivo Excel en el directorio especificado."""
+    timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    dir_subset = os.path.join(dir_crosstabs, f'results_{subset_name}')
+    os.makedirs(dir_subset, exist_ok=True)  # Crear el directorio si no existe
+    filename = os.path.join(dir_subset, f'crosstabs_materiales_{subset_name}_{timestamp}.xlsx')
+    wb.save(filename)
+    return filename
 
 def cargar_umb(bom, modelo):
     """ Devuelve un diccionario de las cantidades UMB por componente para el modelo dado. """
@@ -90,3 +100,4 @@ def agregar_enlace_indice_hoja(ws):
     cell.hyperlink = Hyperlink(ref="", location=link, display="Volver al índice")
     cell.font = Font(color="0000FF", underline="single")
     cell.alignment = Alignment(horizontal="center")
+
