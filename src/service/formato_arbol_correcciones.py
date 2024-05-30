@@ -30,9 +30,15 @@ def format_arbol_correcciones(arbol_ws):
     # Formatear como tabla
     tab = Table(displayName="ArbolCorrecciones", ref=arbol_ws.dimensions)
     style = TableStyleInfo(name="TableStyleMedium9", showFirstColumn=False,
-                            showLastColumn=False, showRowStripes=True, showColumnStripes=True)
+                           showLastColumn=False, showRowStripes=True, showColumnStripes=True)
     tab.tableStyleInfo = style
     arbol_ws.add_table(tab)
+
+    # Ocultar columnas especificadas
+    columnas_a_ocultar = ["Versión fabricación", "Ruta (predecesor)", "Entrada en tabla", "mod-mat", "mod-fase", "proj-mat"]
+    for cell in arbol_ws[1]:  # Buscar columnas por nombre en la primera fila
+        if cell.value in columnas_a_ocultar:
+            arbol_ws.column_dimensions[cell.column_letter].hidden = True
 
     # Formato condicional para la columna "margen_ordenes"
     umb = 0
