@@ -10,25 +10,25 @@ def transformar_bom_a_arbol_correcciones(bom, coois, fabr_real, stocks):
         bom.rename(columns={"Texto breve-objeto": "Texto breve"}, inplace=True)
 
     # Cambiar tipos de datos si las columnas existen
-    cols_to_convert = {
-        "index": "int64",
-        "Versión fabricación": "int64",
-        "Nivel explosión": "str",
-        "Nº componentes": "str",
-        "Texto breve": "str",
-        "Grupo de artículos": "str",
-        "Almacén producción": "str",
-        "Ctd.componente (UMB)": "int64",
-        "Nivel": "int64",
-        "Ruta (predecesor)": "int64",
-        "Entrada en tabla": "int64",
-        "Modelo": "str",
-        "pos_estructura": "str"
-    }
+    # cols_to_convert = {
+    #     "index": "int64",
+    #     "Versión fabricación": "int64",
+    #     "Nivel explosión": "str",
+    #     "Nº componentes": "str",
+    #     "Texto breve": "str",
+    #     "Grupo de artículos": "str",
+    #     "Almacén producción": "str",
+    #     "Ctd.componente (UMB)": "int64",
+    #     "Nivel": "int64",
+    #     "Ruta (predecesor)": "int64",
+    #     "Entrada en tabla": "int64",
+    #     "Modelo": "str",
+    #     "pos_estructura": "str"
+    # }
 
-    for col, dtype in cols_to_convert.items():
-        if col in bom.columns:
-            bom[col] = bom[col].astype(dtype)
+    # for col, dtype in cols_to_convert.items():
+    #     if col in bom.columns:
+    #         bom[col] = bom[col].astype(dtype)
 
     # Añadir columna personalizada
     bom["mod-mat"] = bom["Modelo"] + "-" + bom["Nº componentes"]

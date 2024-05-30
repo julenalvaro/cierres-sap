@@ -14,24 +14,24 @@ def cargar_datos(archivo, sheet_bom_ea, sheet_bom_eb, sheet_coois, sheet_stocks,
 
 def transformar_coois(coois):
 
-    # Cambio de tipo de las columnas en df_python
-    convert_dict = {
-        'Order': 'Int64',
-        'Project Number': 'str',
-        'Material': 'str',
-        'Material description': 'str',
-        'Model (Effectivity)': 'str',
-        'Z Unit': 'Int64',
-        'System Status': 'str',
-        'WBS Element': 'str',
-        'BOM Version': 'Int64',
-        'Production Version': 'Int64',
-        'Routing Version': 'Int64',
-        'Release date (actual)': 'datetime64[ns]',
-        'Order quantity (GMEIN)': 'Int64'
-    }
+    # # Cambio de tipo de las columnas en df_python
+    # convert_dict = {
+    #     'Order': 'Int64',
+    #     'Project Number': 'str',
+    #     'Material': 'str',
+    #     'Material description': 'str',
+    #     'Model (Effectivity)': 'str',
+    #     'Z Unit': 'Int64',
+    #     'System Status': 'str',
+    #     'WBS Element': 'str',
+    #     'BOM Version': 'Int64',
+    #     'Production Version': 'Int64',
+    #     'Routing Version': 'Int64',
+    #     'Release date (actual)': 'datetime64[ns]',
+    #     'Order quantity (GMEIN)': 'Int64'
+    # }
 
-    coois = coois.astype(convert_dict)
+    # coois = coois.astype(convert_dict)
 
     # Añadir una columna personalizada en coois
     coois['mod-mat'] = coois['Model (Effectivity)'] + '-' + coois['Material']
@@ -47,12 +47,12 @@ def transformar_coois(coois):
 
 def transformar_stocks(df):
     # Cambiar el tipo de las columnas especificadas
-    df = df.astype({
-        'Material': 'str',
-        'Unrestricted Stock': 'Int64',
-        'Description of Storage Location': 'str',
-        'WBS Element': 'str'
-    })
+    # df = df.astype({
+    #     'Material': 'str',
+    #     'Unrestricted Stock': 'Int64',
+    #     'Description of Storage Location': 'str',
+    #     'WBS Element': 'str'
+    # })
     
     # Añadir la columna Proyecto
     df['Proyecto'] = df['WBS Element'].apply(lambda x: x.split('-')[1] if '-' in x else '')
@@ -64,19 +64,19 @@ def transformar_stocks(df):
 
 def transformar_fabricacion_real(df):
     # Cambiar el tipo de las columnas especificadas
-    df = df.astype({
-        'Proyecto_sap': 'Int64',
-        'Vértice': 'str',
-        'modelo': 'str',
-        'Fase': 'str',
-        'Mod-Fas': 'str',
-        'Tramos fabricados': 'str',
-        'Tramos no fabricados': 'str',
-        'cant_fabricados': 'Int64',
-        'cant_no_fab': 'Int64',
-        'Unidades fabricadas': 'str',
-        'Unidades no fabricadas': 'str'
-    })
+    # df = df.astype({
+    #     'Proyecto_sap': 'Int64',
+    #     'Vértice': 'str',
+    #     'modelo': 'str',
+    #     'Fase': 'str',
+    #     'Mod-Fas': 'str',
+    #     'Tramos fabricados': 'str',
+    #     'Tramos no fabricados': 'str',
+    #     'cant_fabricados': 'Int64',
+    #     'cant_no_fab': 'Int64',
+    #     'Unidades fabricadas': 'str',
+    #     'Unidades no fabricadas': 'str'
+    # })
     
     # Convertir 'nan' texto a np.nan
     df['modelo'] = df['modelo'].replace('nan', np.nan)
