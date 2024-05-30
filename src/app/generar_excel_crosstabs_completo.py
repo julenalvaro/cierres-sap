@@ -9,7 +9,7 @@ from src.config.config import obtener_configuracion
 from src.service.generar_crosstab_modelo_materiales import cargar_datos, transformar_coois, transformar_stocks, transformar_fabricacion_real, generar_crosstab_modelo_materiales
 from src.service.formato_crosstab import format_crosstabs, agregar_cantidad_bom_header, formato_indice, agregar_enlace_indice, agregar_enlace_indice_hoja, guardar_excel
 from src.service.transformar_bom_a_arbol_correcciones import transformar_bom_a_arbol_correcciones
-from src.service.formato_arbol_correcciones import agregar_enlace_arbol
+from src.service.formato_arbol_correcciones import agregar_enlace_arbol, format_arbol_correcciones
 
 def generar_excel_crosstabs_completo(archivo, sheet_bom_ea, sheet_bom_eb, sheet_coois, sheet_stocks, sheet_fabricacion_real_ea, sheet_fabricacion_real_eb):
     config = obtener_configuracion()
@@ -74,6 +74,7 @@ def generar_excel_crosstabs_completo(archivo, sheet_bom_ea, sheet_bom_eb, sheet_
                     agregar_enlace_indice(index_sheet, modelo, i + 1)
 
                 formato_indice(index_sheet)
+                format_arbol_correcciones(arbol_ws)
 
                 # Reordenar hojas: árbol de correcciones primero, luego índice, luego crosstabs
                 wb._sheets.sort(key=lambda sheet: sheet.title not in [f'arbol_correcciones_{subset_name}', "Índice"])
