@@ -46,6 +46,7 @@ def generar_excel_crosstabs_completo(archivo, sheet_bom_ea, sheet_bom_eb, sheet_
                 index_sheet.append(["Modelo"])
                 unique_modelos = sorted(bom['Modelo'].unique())
 
+                # Generar crosstabs modelos
                 for i, modelo in enumerate(unique_modelos, start=2):
                     ws = wb.create_sheet(title=modelo)
                     crosstab = generar_crosstab_modelo_materiales(bom, coois, modelo)
