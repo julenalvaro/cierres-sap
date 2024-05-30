@@ -41,13 +41,13 @@ def generar_excel_crosstabs_completo(archivo, sheet_bom_ea, sheet_bom_eb, sheet_
                 wb = Workbook()
                 wb.remove(wb.active)  # Elimina la pestaña predeterminada
 
-                index_sheet = wb.create_sheet(title="Índice", index=0)
+                index_sheet = wb.create_sheet(title="Índice", index=1)
                 index_sheet.append(["Modelo"])
                 unique_modelos = sorted(bom['Modelo'].unique())
 
                 # Generar crosstabs modelos
                 for i, modelo in enumerate(unique_modelos, start=2):
-                    ws = wb.create_sheet(title=modelo)
+                    ws = wb.create_sheet(title=modelo, index=i + 2)
                     crosstab = generar_crosstab_modelo_materiales(bom, coois, modelo)
                     for row in dataframe_to_rows(crosstab, index=True, header=True):
                         ws.append(row)
@@ -55,7 +55,7 @@ def generar_excel_crosstabs_completo(archivo, sheet_bom_ea, sheet_bom_eb, sheet_
                     format_crosstabs(ws, bom, modelo)
 
                     # Agregar enlace al índice y darle formato
-                    agregar_enlace_indice(index_sheet, modelo, i)
+                    agregar_enlace_indice(index_sheet, modelo, i + 2)
                     agregar_enlace_indice_hoja(ws)
 
                 # sección del árbol de correcciones
@@ -69,12 +69,15 @@ def generar_excel_crosstabs_completo(archivo, sheet_bom_ea, sheet_bom_eb, sheet_
                 arbol_correcciones.fillna('', inplace=True)
 
                 # Aquí debes considerar cómo y dónde deseas guardar el DataFrame `arbol_correcciones`
-                arbol_ws = wb.create_sheet(title=f'arbol_correcciones_{subset_name}')
+                arbol_ws = wb.create_sheet(title=f'arbol_correcciones_{subset_name}', index=0)
                 for row in dataframe_to_rows(arbol_correcciones, index=False, header=True):
                     arbol_ws.append(row)
 
                 formato_indice(index_sheet)
 
+                # Reordenar hojas: árbol de correcciones primero, luego índice, luego crosstabs
+                wb._sheets.sort(key=lambda sheet: sheet.title not in [f'arbol_correcciones_{subset_name}', "Índice"])
+                
                 filename = guardar_excel(wb, dir_crosstabs, subset_name)
                 results.append(filename)
                 print(f'Archivo generado para {subset_name}: {filename}')
