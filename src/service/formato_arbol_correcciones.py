@@ -2,6 +2,10 @@
 
 from openpyxl.styles import Font
 from openpyxl.worksheet.hyperlink import Hyperlink
+from openpyxl.worksheet.table import Table, TableStyleInfo
+from openpyxl.styles import PatternFill, Alignment
+from openpyxl.formatting.rule import CellIsRule
+from openpyxl.comments import Comment
 
 def agregar_enlace_arbol(ws, modelos):
     # Encontrar la columna que contiene el encabezado "Modelo"
@@ -26,19 +30,48 @@ from openpyxl.formatting.rule import CellIsRule
 from openpyxl.styles import PatternFill
 from openpyxl.worksheet.table import Table, TableStyleInfo
 
+
 def format_arbol_correcciones(arbol_ws):
     # Formatear como tabla
     tab = Table(displayName="ArbolCorrecciones", ref=arbol_ws.dimensions)
     style = TableStyleInfo(name="TableStyleMedium9", showFirstColumn=False,
-                           showLastColumn=False, showRowStripes=True, showColumnStripes=True)
+                            showLastColumn=False, showRowStripes=True, showColumnStripes=True)
     tab.tableStyleInfo = style
     arbol_ws.add_table(tab)
 
-    # Ocultar columnas especificadas
-    columnas_a_ocultar = ["Versión fabricación", "Ruta (predecesor)", "Entrada en tabla", "mod-mat", "mod-fase", "proj-mat"]
-    for cell in arbol_ws[1]:  # Buscar columnas por nombre en la primera fila
-        if cell.value in columnas_a_ocultar:
-            arbol_ws.column_dimensions[cell.column_letter].hidden = True
+    # Ajustar el ancho de las columnas al contenido, excluyendo el encabezado
+    columns_to_exclude = ["pos_estructura", "Nivel explosión", "margen_ordenes", "stocks"]
+    for col in arbol_ws.columns:
+        max_length = 0
+        column = col[0].column_letter  # Obtén la letra de la columna
+        column_header = col[0].value
+        if column_header not in columns_to_exclude:
+            for cell in col[1:]:  # Omite el encabezado
+                try:
+                    if cell.value and len(str(cell.value)) > max_length:
+                        max_length = len(str(cell.value))
+                except:
+                    pass
+            adjusted_width = (max_length + 2)
+        else:
+            adjusted_width = len(column_header) + 2
+        arbol_ws.column_dimensions[column].width = adjusted_width
+
+    # Añadir comentarios a los encabezados
+    for cell in arbol_ws[1]:  # Primera fila (encabezados)
+        cell.comment = Comment(text=cell.value, author="AutoFormat")
+
+    # Centrar el contenido de todas las celdas, excepto pos_estructura y Nivel explosión
+    center_alignment = Alignment(horizontal="center", vertical="center")
+    left_alignment = Alignment(horizontal="left", vertical="center")
+    for row in arbol_ws.iter_rows():
+        for cell in row:
+            if cell.row == 1:  # Saltar encabezados
+                continue
+            if cell.column_letter in [col[0].column_letter for col in arbol_ws.columns if col[0].value in ["pos_estructura", "Nivel explosión"]]:
+                cell.alignment = left_alignment
+            else:
+                cell.alignment = center_alignment
 
     # Formato condicional para la columna "margen_ordenes"
     umb = 0
@@ -59,3 +92,6 @@ def format_arbol_correcciones(arbol_ws):
                                             CellIsRule(operator="greaterThan", formula=[str(umb)], fill=yellow_fill))
         arbol_ws.conditional_formatting.add(f"{col_margen_ordenes}2:{col_margen_ordenes}{arbol_ws.max_row}",
                                             CellIsRule(operator="equal", formula=[str(umb)], fill=green_fill))
+
+    # Congelar paneles para que los encabezados siempre sean visibles
+    arbol_ws.freeze_panes = arbol_ws['A2']

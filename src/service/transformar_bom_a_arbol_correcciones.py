@@ -81,12 +81,22 @@ def transformar_bom_a_arbol_correcciones(bom, coois, fabr_real, stocks):
     # Unir con stocks sumarizado
     bom = bom.merge(stocks_aggregated, on="proj-mat", how="left")
 
-    # Reordenar columnas
+    # # Reordenar columnas - todas
+    # bom = bom[[
+    #     "index", "Versión fabricación", "Nivel explosión", "Nº componentes", "Texto breve", "Grupo de artículos",
+    #     "Almacén producción", "Nivel", "Ruta (predecesor)", "Entrada en tabla", "Modelo", "pos_estructura", "mod-mat",
+    #     "fase", "mod-fase", "proj-mat", "Ctd.componente (UMB)", "unidades_necesarias", "ordenes_necesarias",
+    #     "ordenes_GMEIN_disp", "margen_ordenes", "stock"
+    # ]]
+
+    # Reordenar columnas - reducido
     bom = bom[[
-        "index", "Versión fabricación", "Nivel explosión", "Nº componentes", "Texto breve", "Grupo de artículos",
-        "Almacén producción", "Nivel", "Ruta (predecesor)", "Entrada en tabla", "Modelo", "pos_estructura", "mod-mat",
-        "fase", "mod-fase", "proj-mat", "Ctd.componente (UMB)", "unidades_necesarias", "ordenes_necesarias",
+        "index", "Nivel explosión", "pos_estructura", "Nº componentes", "Texto breve", "Grupo de artículos",
+        "Almacén producción", "Modelo",
+        "fase", "Ctd.componente (UMB)", "unidades_necesarias", "ordenes_necesarias",
         "ordenes_GMEIN_disp", "margen_ordenes", "stock"
     ]]
+
+    bom.rename(columns={"Nº componentes": "Material"}, inplace=True)
 
     return bom
