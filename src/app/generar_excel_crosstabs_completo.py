@@ -58,7 +58,6 @@ def generar_excel_crosstabs_completo(archivo, sheet_bom_ea, sheet_bom_eb, sheet_
                 arbol_correcciones.fillna('', inplace=True)
                 for row in dataframe_to_rows(arbol_correcciones, index=False, header=True):
                     arbol_ws.append(row)
-                agregar_enlace_arbol(arbol_ws, unique_modelos)
                 
                 # Generar crosstabs modelos
                 for i, modelo in enumerate(unique_modelos, start=2):
@@ -75,6 +74,7 @@ def generar_excel_crosstabs_completo(archivo, sheet_bom_ea, sheet_bom_eb, sheet_
 
                 formato_indice(index_sheet)
                 format_arbol_correcciones(arbol_ws)
+                agregar_enlace_arbol(arbol_ws, unique_modelos)
 
                 # Reordenar hojas: árbol de correcciones primero, luego índice, luego crosstabs
                 wb._sheets.sort(key=lambda sheet: sheet.title not in [f'arbol_correcciones_{subset_name}', "Índice"])
