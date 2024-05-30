@@ -1,16 +1,18 @@
-# PATH: src/app/generar_excel_crosstabs_completo.py
-
+import os
 import traceback
-import numpy as np
 from openpyxl import Workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
 import datetime
 
+from src.config.config import obtener_configuracion
 from src.service.generar_crosstab_modelo_materiales import cargar_datos, transformar_coois, transformar_stocks, transformar_fabricacion_real, generar_crosstab_modelo_materiales
 from src.service.formato_crosstab import format_crosstabs, agregar_cantidad_bom_header, formato_indice, agregar_enlace_indice, agregar_enlace_indice_hoja
 from src.service.transformar_bom_a_arbol_correcciones import transformar_bom_a_arbol_correcciones
 
 def generar_excel_crosstabs_completo(archivo, sheet_bom_ea, sheet_bom_eb, sheet_coois, sheet_stocks, sheet_fabricacion_real_ea, sheet_fabricacion_real_eb):
+    config = obtener_configuracion()
+    dir_crosstabs = os.path.join(config.DIR_BASE, "informes_crosstab")
+
     try:
         print('Cargando datos...')
         bom_ea, bom_eb, coois, stocks, fabricacion_real_ea, fabricacion_real_eb = cargar_datos(
@@ -72,7 +74,9 @@ def generar_excel_crosstabs_completo(archivo, sheet_bom_ea, sheet_bom_eb, sheet_
 
                 formato_indice(index_sheet)
                 timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-                filename = f'./results/crosstabs_{subset_name}/crosstabs_materiales_{subset_name}_{timestamp}.xlsx'
+                dir_subset = os.path.join(dir_crosstabs, f'results_{subset_name}')
+                os.makedirs(dir_subset, exist_ok=True)  # Crear el directorio si no existe
+                filename = os.path.join(dir_subset, f'crosstabs_materiales_{subset_name}_{timestamp}.xlsx')
                 wb.save(filename)
                 results.append(filename)
                 print(f'Archivo generado para {subset_name}: {filename}')
