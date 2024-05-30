@@ -64,19 +64,19 @@ def transformar_stocks(df):
 
 def transformar_fabricacion_real(df):
     # Cambiar el tipo de las columnas especificadas
-    # df = df.astype({
-    #     'Proyecto_sap': 'Int64',
-    #     'Vértice': 'str',
-    #     'modelo': 'str',
-    #     'Fase': 'str',
-    #     'Mod-Fas': 'str',
-    #     'Tramos fabricados': 'str',
-    #     'Tramos no fabricados': 'str',
-    #     'cant_fabricados': 'Int64',
-    #     'cant_no_fab': 'Int64',
-    #     'Unidades fabricadas': 'str',
-    #     'Unidades no fabricadas': 'str'
-    # })
+    df = df.astype({
+        'Proyecto_sap': 'Int64',
+        'Vértice': 'str',
+        'modelo': 'str',
+        'Fase': 'str',
+        'Mod-Fas': 'str',
+        'Tramos fabricados': 'str',
+        'Tramos no fabricados': 'str',
+        'cant_fabricados': 'Int64',
+        'cant_no_fab': 'Int64',
+        'Unidades fabricadas': 'str',
+        'Unidades no fabricadas': 'str'
+    })
     
     # Convertir 'nan' texto a np.nan
     df['modelo'] = df['modelo'].replace('nan', np.nan)

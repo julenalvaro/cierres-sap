@@ -73,7 +73,7 @@ def generar_excel_crosstabs_completo(archivo, sheet_bom_ea, sheet_bom_eb, sheet_
                     agregar_enlace_indice(index_sheet, modelo, i + 1)
 
                 formato_indice(index_sheet)
-                format_arbol_correcciones(arbol_ws)
+                # format_arbol_correcciones(arbol_ws)
                 agregar_enlace_arbol(arbol_ws, unique_modelos)
 
                 # Reordenar hojas: árbol de correcciones primero, luego índice, luego crosstabs
