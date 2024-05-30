@@ -58,6 +58,8 @@ def generar_excel_crosstabs_completo(archivo, sheet_bom_ea, sheet_bom_eb, sheet_
                     agregar_enlace_indice(index_sheet, modelo, i)
                     agregar_enlace_indice_hoja(ws)
 
+                # sección del árbol de correcciones
+
                 print('Transformando árbol...')
 
                 arbol_correcciones = transformar_bom_a_arbol_correcciones(bom, coois, fabricacion_real, stocks)
