@@ -93,11 +93,11 @@ def formato_indice(index_sheet):
         for cell in row:
             cell.alignment = Alignment(horizontal="center")
 
-def agregar_enlace_indice_hoja(ws):
-    """Agrega un enlace a la hoja de índice en la primera celda de la hoja."""
-    cell = ws.cell(row=1, column=1, value="Volver al índice")
-    link = f"#'Índice'!A1"
-    cell.hyperlink = Hyperlink(ref="", location=link, display="Volver al índice")
+def agregar_enlace_indice_hoja(ws, nombre_hoja_destino):
+    """Agrega un enlace a la hoja especificada en la primera celda de la hoja actual."""
+    cell = ws.cell(row=1, column=1, value=f"Volver a {nombre_hoja_destino}")
+    link = f"#'{nombre_hoja_destino}'!A1"
+    cell.hyperlink = Hyperlink(ref="", location=link, display=f"Volver a {nombre_hoja_destino}")
     cell.font = Font(color="0000FF", underline="single")
     cell.alignment = Alignment(horizontal="center")
 
