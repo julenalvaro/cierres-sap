@@ -4,9 +4,8 @@ from src.app.generar_excel_crosstabs_completo import generar_excel_crosstabs_com
 
 if __name__ == "__main__":
     archivo_excel_master_data = r"prod_files\data\master_data.xlsx"
-    archivo_stocks = r"C:\Users\18287\OneDrive - Construcciones y Auxiliar deFerrocarriles SA (CAF)\projects\25-mudanza-ordenes-baan\archivos\descargas\descarga_producción\comparativa_idiomas\Materiales_ES.xlsx"
-    archivo_coois = r"C:\Users\18287\OneDrive - Construcciones y Auxiliar deFerrocarriles SA (CAF)\projects\25-mudanza-ordenes-baan\archivos\descargas\descarga_producción\comparativa_idiomas\coois_es.xlsx"
-    
+    archivo_stocks = r"C:\Users\18287\Downloads\Materials (5).xlsx"
+    archivo_coois = r"C:\Users\18287\Downloads\EXPORT - 2024-06-05T194251.068.xlsx"
     args = {
         "archivo_stocks": archivo_stocks,
         "archivo_coois": archivo_coois,
