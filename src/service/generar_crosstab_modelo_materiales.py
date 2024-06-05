@@ -10,26 +10,41 @@ def cargar_datos_maestros(archivo, sheet_bom_ea, sheet_bom_eb, sheet_coois, shee
     fabricacion_real_eb = pd.read_excel(archivo, sheet_name=sheet_fabricacion_real_eb)
     return bom_ea, bom_eb,fabricacion_real_ea, fabricacion_real_eb
 
+
 def transformar_coois(coois):
+    
+    # PARTE 1: TRADUCCIÓN DE COLUMNAS POR SI SE DESCARGAN EN CASTELLANO
+    
+    # Diccionario de traducción de columnas del español al inglés
+    traducciones = {
+        'Orden': 'Order',
+        'Número de proyecto': 'Project Number',
+        'Número material': 'Material',
+        'Texto breve material': 'Material description',
+        'Modelo': 'Model (Effectivity)',
+        'Unidad': 'Z Unit',
+        'Estado de sistema': 'System Status',
+        'Elemento PEP': 'WBS Element',
+        'Versión de lista de materiales': 'BOM Version',
+        'Versión fabricación': 'Production Version',
+        'Versión hoja ruta': 'Routing Version',
+        'Fecha liberac.real': 'Release date (actual)',
+        'Cantidad orden (GMEIN)': 'Order quantity (GMEIN)'
+    }
+    
+    # Lista de columnas originales
+    columnas_originales = coois.columns.tolist()
+    
+    # Traducir las columnas si están en español
+    columnas_traducidas = [traducciones.get(col, col) for col in columnas_originales]
+    
+    # Asignar las nuevas columnas traducidas al DataFrame
+    coois.columns = columnas_traducidas
 
-    # # Cambio de tipo de las columnas en df_python
-    # convert_dict = {
-    #     'Order': 'Int64',
-    #     'Project Number': 'str',
-    #     'Material': 'str',
-    #     'Material description': 'str',
-    #     'Model (Effectivity)': 'str',
-    #     'Z Unit': 'Int64',
-    #     'System Status': 'str',
-    #     'WBS Element': 'str',
-    #     'BOM Version': 'Int64',
-    #     'Production Version': 'Int64',
-    #     'Routing Version': 'Int64',
-    #     'Release date (actual)': 'datetime64[ns]',
-    #     'Order quantity (GMEIN)': 'Int64'
-    # }
+    # PARTE 2: TRANSFORMACIONES
 
-    # coois = coois.astype(convert_dict)
+    # Eliminar las filas donde "System Status" contiene "TECO" o "CTEC"
+    coois = coois[~coois['System Status'].str.contains('TECO|CTEC', na=False)]
 
     # Añadir una columna personalizada en coois
     coois['mod-mat'] = coois['Model (Effectivity)'] + '-' + coois['Material']
@@ -43,14 +58,29 @@ def transformar_coois(coois):
     
     return coois_ea, coois_eb
 
+
 def transformar_stocks(df):
-    # Cambiar el tipo de las columnas especificadas
-    # df = df.astype({
-    #     'Material': 'str',
-    #     'Unrestricted Stock': 'Int64',
-    #     'Description of Storage Location': 'str',
-    #     'WBS Element': 'str'
-    # })
+    
+    # PARTE 1: TRADUCCIÓN DE COLUMNAS POR SI SE DESCARGAN EN CASTELLANO
+
+    # Diccionario de traducción de columnas del español al inglés
+    traducciones = {
+        'Material': 'Material',
+        'Stock de libre utilización': 'Unrestricted Stock',
+        'Descripción de almacén': 'Description of Storage Location',
+        'Elemento PEP': 'WBS Element'
+    }
+    
+    # Lista de columnas originales
+    columnas_originales = df.columns.tolist()
+    
+    # Traducir las columnas si están en español
+    columnas_traducidas = [traducciones.get(col, col) for col in columnas_originales]
+    
+    # Asignar las nuevas columnas traducidas al DataFrame
+    df.columns = columnas_traducidas
+
+    # PARTE 2: TRANSFORMACIONES
     
     # Añadir la columna Proyecto
     df['Proyecto'] = df['WBS Element'].apply(lambda x: x.split('-')[1] if '-' in x else '')
@@ -104,5 +134,5 @@ def generar_crosstab_modelo_materiales(bom, coois, modelo):
     crosstab = pd.crosstab(coois_filtrado['mod_ud'], coois_filtrado['Material'],
                             values=coois_filtrado['Order quantity (GMEIN)'], aggfunc='sum').fillna(0)
     
-
     return crosstab
+

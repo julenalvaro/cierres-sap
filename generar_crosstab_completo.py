@@ -15,7 +15,7 @@ if __name__ == "__main__":
         "sheet_fabricacion_real_ea": 'fabricacion_real_ea',
         "sheet_fabricacion_real_eb": 'fabricacion_real_eb'
     }
-
+    
     archivo_generado_ea, archivo_generado_eb = generar_excel_crosstabs_completo(**args)
 
 
