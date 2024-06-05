@@ -1,11 +1,10 @@
-# PATH: src/app/routers/excel_router.py
-
 from fastapi import APIRouter, File, UploadFile, Form, HTTPException
 from fastapi.responses import FileResponse
 from typing import Optional
 import os
 from datetime import datetime
 import shutil
+import zipfile
 
 router = APIRouter()
 
@@ -13,6 +12,13 @@ def get_file_path(filename: str, prefix: str = "") -> str:
     """ Helper function to create file path """
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
     return f"static/results/{prefix}{timestamp}_{filename}"
+
+def create_zip_file(files, zip_filename):
+    """ Create a zip file from a list of files """
+    with zipfile.ZipFile(zip_filename, 'w') as zipf:
+        for file in files:
+            zipf.write(file, os.path.basename(file))
+    return zip_filename
 
 @router.post("/generate_excel/")
 async def generate_excel(
@@ -45,11 +51,15 @@ async def generate_excel(
         archivo_maestros=master_data_path
     )
 
-    # Directly return files as download responses
-    if download_ea and result_paths[0]:
+    # Create ZIP file if both files are to be downloaded
+    if download_ea and download_eb and result_paths[0] and result_paths[1]:
+        zip_filename = get_file_path("combined_results.zip", "zip_")
+        create_zip_file([result_paths[0], result_paths[1]], zip_filename)
+        return FileResponse(zip_filename, media_type='application/zip', filename="combined_results.zip")
+    elif download_ea and result_paths[0]:
         return FileResponse(result_paths[0], media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', filename=os.path.basename(result_paths[0]))
     elif download_eb and result_paths[1]:
         return FileResponse(result_paths[1], media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', filename=os.path.basename(result_paths[1]))
     else:
-        raise HTTPException(status_code=404, detail="Generated file not found")
+        raise HTTPException(status_code=404, detail="No files generated or requested for download")
 
