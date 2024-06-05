@@ -4,13 +4,13 @@ from src.app.generar_excel_crosstabs_completo import generar_excel_crosstabs_com
 
 if __name__ == "__main__":
     archivo_excel_master_data = r"prod_files\data\master_data.xlsx"
-    archivo_stocks = r"prod_files\data\stocks_EB_2024_06_05.xlsx"
-    archivo_coois = r"prod_files\data\coois_eb_ejemplo.xlsx"
+    archivo_stocks = r"C:\Users\18287\OneDrive - Construcciones y Auxiliar deFerrocarriles SA (CAF)\projects\25-mudanza-ordenes-baan\archivos\descargas\descarga_producción\comparativa_idiomas\Materiales_ES.xlsx"
+    archivo_coois = r"C:\Users\18287\OneDrive - Construcciones y Auxiliar deFerrocarriles SA (CAF)\projects\25-mudanza-ordenes-baan\archivos\descargas\descarga_producción\comparativa_idiomas\coois_es.xlsx"
     
     args = {
         "archivo_stocks": archivo_stocks,
         "archivo_coois": archivo_coois,
-        "archivo_master_data": archivo_excel_master_data
+        "archivo_maestros": archivo_excel_master_data
     }
     
     archivo_generado_ea, archivo_generado_eb = generar_excel_crosstabs_completo(**args)

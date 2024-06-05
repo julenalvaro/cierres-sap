@@ -10,6 +10,15 @@ def cargar_datos_maestros(archivo):
     fabricacion_real_eb = pd.read_excel(archivo, sheet_name='fabricacion_real_eb')
     return bom_ea, bom_eb,fabricacion_real_ea, fabricacion_real_eb
 
+def cargar_datos_coois(archivo):
+    # Leer la primera hoja del archivo Excel, sea cual sea su nombre
+    coois = pd.read_excel(archivo)
+    return coois
+
+def cargar_datos_stocks(archivo):
+    # Leer la primera hoja del archivo Excel, sea cual sea su nombre
+    stocks = pd.read_excel(archivo)
+    return stocks
 
 def transformar_coois(coois):
     
@@ -44,7 +53,7 @@ def transformar_coois(coois):
     # PARTE 2: TRANSFORMACIONES
 
     # Eliminar las filas donde "System Status" contiene "TECO" o "CTEC"
-    coois = coois[~coois['System Status'].str.contains('TECO|CTEC', na=False)]
+    coois = coois[~coois['System Status'].str.contains('TECO|CTEC', na=False)].copy()
 
     # Añadir una columna personalizada en coois
     coois['mod-mat'] = coois['Model (Effectivity)'] + '-' + coois['Material']
