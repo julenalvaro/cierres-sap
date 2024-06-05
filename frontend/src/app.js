@@ -1,10 +1,9 @@
 // PATH: frontend/src/App.js
 
+// src/App.js
 import React, { useState } from 'react';
 import axios from 'axios';
-import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
-import FormControlLabel from '@mui/material/FormControlLabel';
+import { Button, Checkbox, FormControlLabel, Typography, Box, Container, TextField } from '@mui/material';
 
 function App() {
   const [archivoStocks, setArchivoStocks] = useState(null);
@@ -22,39 +21,61 @@ function App() {
     formData.append('download_eb', downloadEB);
 
     try {
-      // El frontend ahora siempre manejará un archivo ZIP
       const response = await axios.post('http://localhost:8000/excel/generate_excel/', formData, {
         responseType: 'blob',
       });
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', 'output.zip'); // Siempre descarga como ZIP
+      link.setAttribute('download', 'output.zip');
       document.body.appendChild(link);
       link.click();
-
     } catch (error) {
       console.error('Error al generar el archivo:', error);
     }
   };
 
   return (
-    <div style={{ margin: 20 }}>
-      <h1>Generador de Archivos Excel</h1>
-      <input type="file" onChange={(e) => handleFileChange(e, setArchivoStocks)} />
-      <input type="file" onChange={(e) => handleFileChange(e, setArchivoCoois)} />
-      <FormControlLabel
-        control={<Checkbox checked={downloadEA} onChange={() => setDownloadEA(!downloadEA)} />}
-        label="Descargar EA"
-      />
-      <FormControlLabel
-        control={<Checkbox checked={downloadEB} onChange={() => setDownloadEB(!downloadEB)} />}
-        label="Descargar EB"
-      />
-      <Button variant="contained" color="primary" onClick={handleSubmit}>
-        Generar
-      </Button>
-    </div>
+    <Container maxWidth="sm">
+      <Box sx={{ my: 4 }}>
+        <Typography variant="h4" gutterBottom>
+          Generador de Archivos Excel
+        </Typography>
+        <TextField
+          type="file"
+          fullWidth
+          variant="outlined"
+          margin="normal"
+          onChange={(e) => handleFileChange(e, setArchivoStocks)}
+          InputLabelProps={{
+            shrink: true,
+          }}
+          label="Cargar Archivo Stocks"
+        />
+        <TextField
+          type="file"
+          fullWidth
+          variant="outlined"
+          margin="normal"
+          onChange={(e) => handleFileChange(e, setArchivoCoois)}
+          InputLabelProps={{
+            shrink: true,
+          }}
+          label="Cargar Archivo Coois"
+        />
+        <FormControlLabel
+          control={<Checkbox checked={downloadEA} onChange={() => setDownloadEA(!downloadEA)} />}
+          label="Descargar EA"
+        />
+        <FormControlLabel
+          control={<Checkbox checked={downloadEB} onChange={() => setDownloadEB(!downloadEB)} />}
+          label="Descargar EB"
+        />
+        <Button variant="contained" color="primary" fullWidth onClick={handleSubmit} sx={{ mt: 2 }}>
+          Generar
+        </Button>
+      </Box>
+    </Container>
   );
 }
 
