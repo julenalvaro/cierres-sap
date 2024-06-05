@@ -3,14 +3,12 @@
 import pandas as pd
 import numpy as np
 
-def cargar_datos(archivo, sheet_bom_ea, sheet_bom_eb, sheet_coois, sheet_stocks, sheet_fabricacion_real_ea, sheet_fabricacion_real_eb):
+def cargar_datos_maestros(archivo, sheet_bom_ea, sheet_bom_eb, sheet_coois, sheet_stocks, sheet_fabricacion_real_ea, sheet_fabricacion_real_eb):
     bom_ea = pd.read_excel(archivo, sheet_name=sheet_bom_ea)
     bom_eb = pd.read_excel(archivo, sheet_name=sheet_bom_eb)
-    coois = pd.read_excel(archivo, sheet_name=sheet_coois)
-    stocks = pd.read_excel(archivo, sheet_name=sheet_stocks)
     fabricacion_real_ea = pd.read_excel(archivo, sheet_name=sheet_fabricacion_real_ea)
     fabricacion_real_eb = pd.read_excel(archivo, sheet_name=sheet_fabricacion_real_eb)
-    return bom_ea, bom_eb, coois, stocks, fabricacion_real_ea, fabricacion_real_eb
+    return bom_ea, bom_eb,fabricacion_real_ea, fabricacion_real_eb
 
 def transformar_coois(coois):
 

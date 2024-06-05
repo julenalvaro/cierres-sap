@@ -6,7 +6,7 @@ from openpyxl import Workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
 
 from src.config.config import obtener_configuracion
-from src.service.generar_crosstab_modelo_materiales import cargar_datos, transformar_coois, transformar_stocks, transformar_fabricacion_real, generar_crosstab_modelo_materiales
+from src.service.generar_crosstab_modelo_materiales import cargar_datos_maestros, cargar_coois, cargar_stocks, transformar_coois, transformar_stocks, transformar_fabricacion_real, generar_crosstab_modelo_materiales
 from src.service.formato_crosstab import format_crosstabs, agregar_cantidad_bom_header, formato_indice, agregar_enlace_indice, agregar_enlace_indice_hoja, guardar_excel
 from src.service.transformar_bom_a_arbol_correcciones import transformar_bom_a_arbol_correcciones_EA, transformar_bom_a_arbol_correcciones_EB
 from src.service.formato_arbol_correcciones import agregar_enlace_arbol, format_arbol_correcciones
@@ -21,7 +21,8 @@ def generar_excel_crosstabs_completo(archivo, sheet_bom_ea, sheet_bom_eb, sheet_
 
     try:
         print('Cargando datos...')
-        bom_ea, bom_eb, coois, stocks, fabricacion_real_ea, fabricacion_real_eb = cargar_datos(
+        
+        bom_ea, bom_eb, fabricacion_real_ea, fabricacion_real_eb = cargar_datos_maestros(
             archivo, 
             sheet_bom_ea, 
             sheet_bom_eb, 
