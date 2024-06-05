@@ -1,11 +1,9 @@
 # PATH: src/service/formato_arbol_correcciones.py
 
-from openpyxl.styles import Font
 from openpyxl.worksheet.hyperlink import Hyperlink
-from openpyxl.worksheet.table import Table, TableStyleInfo
-from openpyxl.styles import PatternFill, Alignment
+from openpyxl.styles import PatternFill, Alignment, Font
 from openpyxl.formatting.rule import CellIsRule
-from openpyxl.comments import Comment
+from openpyxl.worksheet.table import Table, TableStyleInfo
 
 def agregar_enlace_arbol(ws, modelos):
     # Encontrar la columna que contiene el encabezado "Modelo"
@@ -26,10 +24,6 @@ def agregar_enlace_arbol(ws, modelos):
             cell.hyperlink = Hyperlink(ref=f'{modelo_col}{cell.row}', target=f'#\'{modelo}\'!A1', tooltip=f'Ir a {modelo}')
             cell.font = Font(color='0000FF', underline='single')
 
-from openpyxl.formatting.rule import CellIsRule
-from openpyxl.styles import PatternFill
-from openpyxl.worksheet.table import Table, TableStyleInfo
-
 
 def format_arbol_correcciones(arbol_ws):
     print("Iniciando formateo del árbol de correcciones...")
@@ -40,11 +34,6 @@ def format_arbol_correcciones(arbol_ws):
         if cell.value == "margen_ordenes":
             col_margen_ordenes = cell.column_letter
             break
-    
-    if col_margen_ordenes:
-        print(f"Columna 'margen_ordenes' encontrada en {col_margen_ordenes}")
-    else:
-        print("Columna 'margen_ordenes' no encontrada")
 
     # Eliminación de filas con valores vacíos en "margen_ordenes"
     rows_to_delete = []
@@ -54,7 +43,7 @@ def format_arbol_correcciones(arbol_ws):
             if cell_value is None or cell_value == "":
                 rows_to_delete.append(row[0].row)
         
-        print(f"Filas a eliminar: {rows_to_delete}")
+        # print(f"Filas a eliminar: {rows_to_delete}")
         for row in reversed(rows_to_delete):
             arbol_ws.delete_rows(row)
 
@@ -77,22 +66,20 @@ def format_arbol_correcciones(arbol_ws):
                 if len(str(cell.value)) > max_length:
                     max_length = len(str(cell.value))
         arbol_ws.column_dimensions[column].width = max_length + 2
-    print("Anchos de columna ajustados.")
 
     # Añadir comentarios a los encabezados y configurar alineaciones
     center_alignment = Alignment(horizontal="center", vertical="center")
     left_alignment = Alignment(horizontal="left", vertical="center")
     for cell in arbol_ws[1]:
-        cell.comment = Comment(text="Encabezado de columna", author="System")
+        # cell.comment = Comment(text="Encabezado de columna", author="System")
         cell.alignment = center_alignment
 
     for row in arbol_ws.iter_rows(min_row=2):
         for cell in row:
-            if cell.column_letter in ['A', 'B']:  # Asumiendo que A y B son 'pos_estructura' y 'Nivel explosión'
+            if cell.column_letter in ['B', 'C']:  # Asumiendo que A y B son 'pos_estructura' y 'Nivel explosión'
                 cell.alignment = left_alignment
             else:
                 cell.alignment = center_alignment
-    print("Comentarios y alineaciones configuradas.")
 
     # Formato condicional
     if col_margen_ordenes and arbol_ws.max_row > 1:
