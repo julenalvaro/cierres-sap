@@ -54,14 +54,19 @@ async def generate_excel(
     )
 
     # Create ZIP file if both files are to be downloaded
-    if download_ea and download_eb and result_paths[0] and result_paths[1]:
-        zip_filename = get_file_path("descarga_EB_y_EA.zip", "zip_")
-        create_zip_file([result_paths[0], result_paths[1]], zip_filename)
-        return FileResponse(zip_filename, media_type='application/zip', filename="descarga_EB_y_EA.zip")
-    elif download_ea and result_paths[0]:
-        return FileResponse(result_paths[0], media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', filename=os.path.basename(result_paths[0]))
-    elif download_eb and result_paths[1]:
-        return FileResponse(result_paths[1], media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', filename=os.path.basename(result_paths[1]))
-    else:
-        raise HTTPException(status_code=404, detail="No files generated or requested for download")
+    # Ajusta el backend para siempre enviar un zip, incluso para un solo archivo
+    if download_ea or download_eb:
+        files_to_zip = []
+        if download_ea and result_paths[0]:
+            files_to_zip.append(result_paths[0])
+        if download_eb and result_paths[1]:
+            files_to_zip.append(result_paths[1])
+        
+        if files_to_zip:
+            zip_filename = get_file_path("descarga_EB_y_EA.zip", "zip_")
+            create_zip_file(files_to_zip, zip_filename)
+            return FileResponse(zip_filename, media_type='application/zip', filename="descarga_EB_y_EA.zip")
+        else:
+            raise HTTPException(status_code=404, detail="No files generated or requested for download")
+
 

@@ -22,15 +22,17 @@ function App() {
     formData.append('download_eb', downloadEB);
 
     try {
+      // El frontend ahora siempre manejará un archivo ZIP
       const response = await axios.post('http://localhost:8000/excel/generate_excel/', formData, {
         responseType: 'blob',
       });
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', 'output.zip'); // Asumiendo salida como ZIP si ambos están seleccionados
+      link.setAttribute('download', 'output.zip'); // Siempre descarga como ZIP
       document.body.appendChild(link);
       link.click();
+
     } catch (error) {
       console.error('Error al generar el archivo:', error);
     }
