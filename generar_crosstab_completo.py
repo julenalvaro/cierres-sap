@@ -17,5 +17,3 @@ if __name__ == "__main__":
     }
     
     archivo_generado_ea, archivo_generado_eb = generar_excel_crosstabs_completo(**args)
-
-
