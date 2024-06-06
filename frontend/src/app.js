@@ -1,5 +1,4 @@
-// PATH: frontend/src/App.js
-
+// src/App.js
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Button, Checkbox, FormControlLabel, Typography, Box, Container, TextField, CircularProgress, Backdrop } from '@mui/material';
@@ -59,21 +58,18 @@ function App() {
           }}
           label="Cargar Archivo de órdenes de producción (COOIS)"
         />
-        <Typography variant="subtitle1" gutterBottom>
-          Archivo de Stocks Actual: {archivoStocks || "Ninguno seleccionado"}
-        </Typography>
-        <Button
-          variant="contained"
-          component="label"
+        <TextField
+          type="file"
           fullWidth
-        >
-          Cargar Archivo Stocks (Opcional)
-          <input
-            type="file"
-            hidden
-            onChange={(e) => handleFileChange(e, setArchivoStocks)}
-          />
-        </Button>
+          variant="outlined"
+          margin="normal"
+          onChange={(e) => handleFileChange(e, setArchivoStocks)}
+          InputLabelProps={{
+            shrink: true,
+          }}
+          label="Cargar Archivo Stocks (Opcional)"
+          helperText={`Archivo de Stocks Actual: ${archivoStocks instanceof File ? archivoStocks.name : archivoStocks}`}
+        />
         <FormControlLabel
           control={<Checkbox checked={downloadEA} onChange={() => setDownloadEA(!downloadEA)} />}
           label="Descargar EA"
@@ -96,4 +92,3 @@ function App() {
 }
 
 export default App;
-
