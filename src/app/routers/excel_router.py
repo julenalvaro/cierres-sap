@@ -1,8 +1,8 @@
 # PATH: src/app/routers/excel_router.py
 
-from fastapi import APIRouter, File, UploadFile, Form, HTTPException
+from fastapi import APIRouter, File, UploadFile, Form, HTTPException, Depends
 from fastapi.responses import FileResponse
-from typing import Optional
+from typing import Optional, Union
 import os
 from datetime import datetime
 import shutil
@@ -24,7 +24,7 @@ def create_zip_file(files, zip_filename):
 
 @router.post("/generate_excel/")
 async def generate_excel(
-    archivo_stocks: UploadFile = File(...),
+    archivo_stocks: Union[UploadFile, str] = File(default="STOCKS_EA_EB_2024_06_06.xlsx"),
     archivo_coois: UploadFile = File(...),
     master_data: Optional[UploadFile] = File(None),
     download_ea: bool = Form(True),
@@ -32,13 +32,16 @@ async def generate_excel(
 ):
     # Define default master data path and temporary save uploaded files
     master_data_path = "prod_files/data/master_data.xlsx"
-    temp_stocks_path = get_file_path(archivo_stocks.filename, "stocks_")
     temp_coois_path = get_file_path(archivo_coois.filename, "coois_")
-
-    with open(temp_stocks_path, "wb") as buffer:
-        shutil.copyfileobj(archivo_stocks.file, buffer)
     with open(temp_coois_path, "wb") as buffer:
         shutil.copyfileobj(archivo_coois.file, buffer)
+
+    if isinstance(archivo_stocks, UploadFile):
+        temp_stocks_path = get_file_path(archivo_stocks.filename, "stocks_")
+        with open(temp_stocks_path, "wb") as buffer:
+            shutil.copyfileobj(archivo_stocks.file, buffer)
+    else:
+        temp_stocks_path = f"prod_files/data/{archivo_stocks}"  # Use the default file if string identifier is passed
 
     if master_data:
         master_data_path = get_file_path(master_data.filename, "master_")
@@ -54,19 +57,17 @@ async def generate_excel(
     )
 
     # Create ZIP file if both files are to be downloaded
-    # Ajusta el backend para siempre enviar un zip, incluso para un solo archivo
     if download_ea or download_eb:
         files_to_zip = []
         if download_ea and result_paths[0]:
             files_to_zip.append(result_paths[0])
         if download_eb and result_paths[1]:
             files_to_zip.append(result_paths[1])
-        
+
         if files_to_zip:
             zip_filename = get_file_path("descarga_EB_y_EA.zip", "zip_")
             create_zip_file(files_to_zip, zip_filename)
             return FileResponse(zip_filename, media_type='application/zip', filename="descarga_EB_y_EA.zip")
         else:
             raise HTTPException(status_code=404, detail="No files generated or requested for download")
-
 
