@@ -211,6 +211,7 @@ venv_*/
 *.csv
 /DIR_BASE_DEV/
 /dir_base_entorno_pruebas/
+/static/
 
 # Ignorar directorio tmp en cualquier nivel del proyecto
 **/tmp/
