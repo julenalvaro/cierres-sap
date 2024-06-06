@@ -1,7 +1,7 @@
 // src/App.js
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Button, Checkbox, FormControlLabel, Typography, Box, Container, TextField, CircularProgress, Backdrop } from '@mui/material';
+import { Button, Checkbox, FormControlLabel, Typography, Box, Container, TextField, CircularProgress, Backdrop, Paper } from '@mui/material';
 
 function App() {
   const [archivoStocks, setArchivoStocks] = useState("STOCKS_EA_EB_2024_06_06.xlsx"); // Identificador del archivo predeterminado
@@ -47,29 +47,36 @@ function App() {
         <Typography variant="h4" gutterBottom>
           Correcciones SAP División 3
         </Typography>
-        <TextField
-          type="file"
-          fullWidth
-          variant="outlined"
-          margin="normal"
-          onChange={(e) => handleFileChange(e, setArchivoCoois)}
-          InputLabelProps={{
-            shrink: true,
-          }}
-          label="Cargar Archivo de órdenes de producción (COOIS)"
-        />
-        <TextField
-          type="file"
-          fullWidth
-          variant="outlined"
-          margin="normal"
-          onChange={(e) => handleFileChange(e, setArchivoStocks)}
-          InputLabelProps={{
-            shrink: true,
-          }}
-          label="Cargar Archivo Stocks (Opcional)"
-          helperText={`Archivo de Stocks Actual: ${archivoStocks instanceof File ? archivoStocks.name : archivoStocks}`}
-        />
+        <Paper elevation={3} sx={{ p: 2, mb: 3, backgroundColor: '#f3faff' }}>
+          <Typography variant="h6" gutterBottom>
+            Cargar Archivo de Órdenes de Producción (COOIS)
+          </Typography>
+          <TextField
+            type="file"
+            fullWidth
+            variant="outlined"
+            margin="normal"
+            onChange={(e) => handleFileChange(e, setArchivoCoois)}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            label="Seleccionar archivo"
+          />
+        </Paper>
+        <Box sx={{ mb: 3 }}>
+          <TextField
+            type="file"
+            fullWidth
+            variant="outlined"
+            margin="normal"
+            onChange={(e) => handleFileChange(e, setArchivoStocks)}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            label="Cargar Archivo Stocks (Opcional)"
+            helperText={archivoStocks instanceof File ? `Archivo de Stocks Actual: ${archivoStocks.name}` : `Archivo de Stocks Actual: ${archivoStocks}`}
+          />
+        </Box>
         <FormControlLabel
           control={<Checkbox checked={downloadEA} onChange={() => setDownloadEA(!downloadEA)} />}
           label="Descargar EA"
