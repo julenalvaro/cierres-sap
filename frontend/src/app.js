@@ -44,7 +44,7 @@ function App() {
   return (
     <Container maxWidth="sm">
       <Box sx={{ my: 4 }}>
-        <Typography variant="h4" gutterBottom>
+        <Typography variant="h4" gutterBottom align="center">
           Correcciones SAP División 3
         </Typography>
         <Paper elevation={3} sx={{ p: 2, mb: 3, backgroundColor: '#f3faff' }}>
