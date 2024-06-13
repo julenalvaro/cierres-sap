@@ -1,6 +1,5 @@
 // PATH: frontend/src/App.js
 
-// src/App.js
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Button, Checkbox, FormControlLabel, Typography, Box, Container, TextField, CircularProgress, Backdrop, Paper } from '@mui/material';
