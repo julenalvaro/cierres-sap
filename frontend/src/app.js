@@ -5,7 +5,11 @@ import axios from 'axios';
 import { Button, Checkbox, FormControlLabel, Typography, Box, Container, TextField, CircularProgress, Backdrop, Paper } from '@mui/material';
 
 function App() {
-  const [archivoStocks, setArchivoStocks] = useState("STOCKS_EA_EB_2024_06_06.xlsx"); // Identificador del archivo predeterminado
+  // Configuración basada en variables de entorno
+  const serverUrl = `http://${process.env.REACT_APP_SERVERNAME}:${process.env.REACT_APP_SERVER_PORT}/excel/generate_excel/`;
+  const defaultFileIdentifier = process.env.REACT_APP_STOCKS_DEFAULT; 
+
+  const [archivoStocks, setArchivoStocks] = useState(defaultFileIdentifier);
   const [archivoCoois, setArchivoCoois] = useState(null);
   const [downloadEA, setDownloadEA] = useState(true);
   const [downloadEB, setDownloadEB] = useState(true);
@@ -16,17 +20,13 @@ function App() {
   const handleSubmit = async () => {
     setLoading(true);
     const formData = new FormData();
-    if (archivoStocks instanceof File) {
-      formData.append('archivo_stocks', archivoStocks);  // El usuario ha cargado un nuevo archivo
-    } else {
-      formData.append('archivo_stocks', archivoStocks);  // Envía el identificador del archivo predeterminado
-    }
+    formData.append('archivo_stocks', archivoStocks instanceof File ? archivoStocks : defaultFileIdentifier);
     formData.append('archivo_coois', archivoCoois);
     formData.append('download_ea', downloadEA);
     formData.append('download_eb', downloadEB);
 
     try {
-      const response = await axios.post('http://localhost:8000/excel/generate_excel/', formData, {
+      const response = await axios.post(serverUrl, formData, {
         responseType: 'blob',
       });
       const url = window.URL.createObjectURL(new Blob([response.data]));
@@ -75,7 +75,7 @@ function App() {
               shrink: true,
             }}
             label="Cargar Archivo Stocks (Opcional)"
-            helperText={archivoStocks instanceof File ? `Archivo de Stocks Actual: ${archivoStocks.name}` : `Archivo de Stocks Actual: ${archivoStocks}`}
+            helperText={archivoStocks instanceof File ? `Archivo de Stocks Actual: ${archivoStocks.name}` : `Archivo de Stocks Actual: ${defaultFileIdentifier}`}
           />
         </Box>
         <FormControlLabel

@@ -9,16 +9,16 @@ load_dotenv()
 # Obtiene el entorno actual
 entorno_actual = os.getenv("ENTORNO")
 
-def solicitar_confirmacion(config_obj):
-    # Imprime las variables relevantes
-    for key in dir(config_obj):
-        if not key.startswith("__") and not callable(getattr(config_obj, key)):
-            print(f"{key}: {getattr(config_obj, key)}")
+# def solicitar_confirmacion(config_obj):
+#     # Imprime las variables relevantes
+#     for key in dir(config_obj):
+#         if not key.startswith("__") and not callable(getattr(config_obj, key)):
+#             print(f"{key}: {getattr(config_obj, key)}")
     
-    # Solicita confirmación
-    respuesta = input("¿Quieres continuar con estos ajustes? (s/n): ")
-    if respuesta.lower() != 's':
-        exit("Ejecución cancelada por el usuario.")
+#     # Solicita confirmación
+#     respuesta = input("¿Quieres continuar con estos ajustes? (s/n): ")
+#     if respuesta.lower() != 's':
+#         exit("Ejecución cancelada por el usuario.")
 
 # Configuraciones base
 class Config:
@@ -29,13 +29,15 @@ class DesarrolloConfig(Config):
     def __init__(self):
         super().__init__()
         self.DIR_BASE = os.getenv("DIR_BASE_DEV")
+        self.SERVERNAME = os.getenv("SERVERNAME_DEV")
         print("Configuración de Desarrollo cargada.")
-        solicitar_confirmacion(self)
+        # solicitar_confirmacion(self)
 
 class ProduccionConfig(Config):
     def __init__(self):
         super().__init__()
         self.DIR_BASE = os.getenv("DIR_BASE_PROD")
+        self.SERVERNAME = os.getenv("SERVERNAME_PROD")
         print("Configuración de Producción cargada.")
         # Aquí podrías decidir si quieres o no solicitar confirmación en producción
 
