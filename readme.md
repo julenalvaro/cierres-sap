@@ -6,5 +6,3 @@ Dev-frontend:
 
 cd frontend
 npm start
-
-
